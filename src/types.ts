@@ -24,8 +24,8 @@ export type DataVisit = {
 }
 
 export type Services = {
-    title: string[],
-    price: number[]
+    id: string[],
+    price: number
 }
 export type Config = {
     dbUrl: string
