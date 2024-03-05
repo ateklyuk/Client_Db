@@ -2,19 +2,23 @@
   "name": "Task_6",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
+    "fill_db": "tsc && node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.ts"
+    "dev": "nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "log4js": "^6.9.1"
+    "@types/mongoose": "^5.11.97",
+    "faker": "^5.5.3",
+    "log4js": "^6.9.1",
+    "mongoose": "^5.13.22",
+    "ts-mongoose": "^0.0.24"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
+    "@types/faker": "^6.6.9",
     "@types/node": "^20.11.22",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
