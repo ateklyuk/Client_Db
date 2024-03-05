@@ -1,70 +1,71 @@
-
-
 // @ts-ignore
 import faker from "faker"
 import {DataClient, DataVisit, DataService, Services} from "./types";
 
-export const CLIENTS_COUNT = faker.datatype.number({ min: 10, max: 200 })
-export const SERVICE_COUNT = faker.datatype.number({ min: 5, max: 10 })
-export const VISITS_COUNT = faker.datatype.number({ min: 100, max: 3000 })
+const MIN_CLIENTS_COUNT = 10
+const MAX_CLIENTS_COUNT = 200
+const MIN_SERVICE_COUNT = 5
+const MAX_SERVICE_COUNT = 10
+const MIN_VISITS_COUNT = 100
+const MAX_VISITS_COUNT = 3000
+const MIN_WORDS_IN_TITLE = 1
+const MAX_WORDS_IN_TITLE = 3
+const MIN_WORDS_IN_DESCRIPTION = 5
+const MAX_WORDS_IN_DESCRIPTION = 15
+const MIN_PRICE = 500
+const MAX_PRICE = 20000
+const CODE_LENGTH = 32
+
+export const clients_count = faker.datatype.number({min: MIN_CLIENTS_COUNT, max: MAX_CLIENTS_COUNT})
+export const service_count = faker.datatype.number({min: MIN_SERVICE_COUNT, max: MAX_SERVICE_COUNT})
+export const visits_count = faker.datatype.number({min: MIN_VISITS_COUNT, max: MAX_VISITS_COUNT})
 
 export const clientGeneration = (): DataClient[] => {
-    const arrClient: DataClient[] = []
-    for (let i = 0; i < CLIENTS_COUNT; i++) {
-        const client = {
+    return [...Array(clients_count)].map(() => {
+        return {
             id: faker.datatype.uuid(),
             name: faker.name.firstName(),
-            surname: faker.name.findName(),
             lastname: faker.name.findName(),
-            birthdayDate: faker.date.past(),
+            patronymic: faker.name.findName(),
+            birthday: faker.date.past(),
             phone: faker.phone.phoneNumber()
-        }
-        arrClient.push(client)
-    }
-    return arrClient
+        };
+    });
 }
 
 export const serviceGeneration = (): DataService[] => {
-    const arrService: DataService[] = []
-    for (let i = 0; i < SERVICE_COUNT; i++) {
-        const service: DataService = {
+    return [...Array(service_count)].map(() => {
+        return {
             id: faker.datatype.uuid(),
-            title: faker.random.words(1, 3),
-            code: faker.datatype.hexaDecimal(32),
-            price: faker.datatype.number({ min: 500, max: 20000 }),
-            description: faker.random.words(5, 15)
-        }
-        arrService.push(service)
-    }
-    return arrService
+            title: faker.random.words(MIN_WORDS_IN_TITLE, MAX_WORDS_IN_TITLE),
+            code: faker.datatype.hexaDecimal(CODE_LENGTH),
+            price: faker.datatype.number({min: MIN_PRICE, max: MAX_PRICE}),
+            description: faker.random.words(MIN_WORDS_IN_DESCRIPTION, MAX_WORDS_IN_DESCRIPTION)
+        };
+    });
 }
 
-export const visitsGeneration = (arrClient: DataClient[], arrService: DataService[]): DataVisit[] => {
-    const arrVisit: DataVisit[] = []
-    const planeArray = ["Запланировал", "Посетил", "Отменил"]
-
-    for (let i = 0; i < VISITS_COUNT; i++) {
-        const status = planeArray[faker.datatype.number(2)]
-        const mountServices = faker.datatype.number({ min: 1, max: arrService.length - 1 })
-        const services: Services = {id:[], price: 0}
+export const visitsGeneration = (clients: DataClient[], services: DataService[]): DataVisit[] => {
+    const planeTypes = ["Запланировал", "Посетил", "Отменил"]
+    return [...Array(visits_count)].map(() => {
+        const status = planeTypes[faker.datatype.number(planeTypes.length - 1)]
+        const mountCount = faker.datatype.number({min: 1, max: services.length - 1})
+        const idPriceServices: Services = {id: [], price: 0}
         if (status === "Посетил") {
-            for (let k = 0; k < mountServices; k++) {
-                const service = arrService[faker.datatype.number({ min: 1, max: arrService.length - 1})]
-                services.id.push(service.id)
-                services.price += service.price
-            }
+            [...Array(mountCount)].forEach(() => {
+                const service = services[faker.datatype.number(services.length - 1)]
+                idPriceServices.id.push(service.id)
+                idPriceServices.price += service.price
+            })
         }
-
-        const visiting: DataVisit = {
+        return {
             id: faker.datatype.uuid(),
-            clientId: arrClient[faker.datatype.number(CLIENTS_COUNT-1)].id,
+            clientId: clients[faker.datatype.number(clients_count - 1)].id,
             plannedDateTime: faker.date.past(),
             actualDateTime: status !== "Посетил" ? null : faker.date.recent(),
             visitStatus: status,
-            services: status !== "Посетил" ? null : services.id,
-            computedPrice: status !== "Посетил" ? null : services.price
-        }
-        arrVisit.push(visiting)
-    }
-    return arrVisit
+            services: status !== "Посетил" ? null : idPriceServices.id,
+            computedPrice: status !== "Посетил" ? null : idPriceServices.price
+        };
+    });
 }

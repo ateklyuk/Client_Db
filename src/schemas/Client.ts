@@ -1,12 +1,14 @@
 import { Schema, model } from "mongoose"
 
-const clientSchema = new Schema({
-    id: String,
-    name: String,
-    surname: String,
-    lastname: String,
-    birthdayDate: Date,
-    phone: String
+const ClientSchema = new Schema({
+    id: { type: String, unique: true, required: true },
+    name: { type: String, required: true },
+    lastname: { type: String, required: true },
+    patronymic: { type: String },
+    birthday: { type: Date },
+    phone: { type: String }
+},  {
+    timestamps: true
 })
 
-export default model("Client", clientSchema)
+export default model("Client", ClientSchema)

@@ -1,9 +1,9 @@
 export type DataClient = {
     id: string,
     name: string,
-    surname: string,
     lastname: string,
-    birthdayDate: Date,
+    patronymic: string,
+    birthday: Date,
     phone: string
 }
 export type DataService = {

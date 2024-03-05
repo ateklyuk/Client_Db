@@ -1,15 +1,17 @@
 import { Schema, model } from "mongoose"
 
-const visitingSchema = new Schema({
-    id: String,
-    clientId: String,
-    plannedDateTime: Date,
-    actualDateTime: Date,
-    visitStatus: String,
+const VisitingSchema = new Schema({
+    id: { type: String, unique: true, required: true },
+    clientId: { type: String, required: true },
+    plannedDateTime: { type: Date, required: true },
+    actualDateTime: { type: Date },
+    visitStatus: { type: String, required: true },
     services: [
-        String
+        { type: String },
     ],
-    computedPrice: Number
+    computedPrice: { type: Number }
+},  {
+    timestamps: true
 })
 
-export default model("Visiting", visitingSchema)
+export default model("Visiting", VisitingSchema)
